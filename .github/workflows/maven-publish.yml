@@ -1,0 +1,40 @@
+name: Build and Release Spring Boot WARs (Prod Profile)
+
+on:
+  workflow_dispatch:  # Allows manual trigger from GitHub Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Updated to v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4  # Updated to v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build and Package All Spring Boot Apps (Prod Profile)
+        run: |
+          mkdir -p artifacts
+          for dir in */; do
+            if [[ -f "$dir/pom.xml" ]]; then
+              echo "Building $dir with prod profile"
+              (cd "$dir" && mvn clean package  -Dspring.profiles.active=prod -DskipTests)
+              find "$dir/target" -name "*.war" -exec mv {} artifacts/ \;
+            fi
+          done
+
+      - name: Create GitHub Release and Upload WARs
+        uses: softprops/action-gh-release@v2.0.4
+        with:
+          tag_name: "release-${{ github.run_number }}"
+          name: "Spring Boot WAR Release ${{ github.run_number }}"
+          body: "Automated release of Spring Boot WAR files built with the prod profile."
+          files: artifacts/*.war
+          draft: false
+          prerelease: false
