@@ -42,8 +42,8 @@ import in.co.greenwave.dao.LogbookReportService; // Importing service for logboo
 import in.co.greenwave.dao.LogbookService; // Importing service for logbook operations
 import in.co.greenwave.dao.factory.DAOFactory;
 import io.jsonwebtoken.io.IOException;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
+//import io.minio.GetObjectArgs;
+//import io.minio.MinioClient;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,61 +84,61 @@ public class LogbookController {
 	@Autowired // This connects our JwtService automatically
 	private JwtService jwtService; // This is a service that helps us work with tokens
 
-	@Autowired
-	private MinioClient minioClient;
+//	@Autowired
+//	private MinioClient minioClient;
 	
 	//added by Ahsok
 	
-	@GetMapping("/file")
-    public void getFileByKey(@RequestParam String minio_key,@RequestParam String tenantId, HttpServletResponse response) {
-        try {
-        	String bucket = tenantId.toLowerCase();
-            InputStream stream = minioClient.getObject(
-                GetObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(minio_key)
-                    .build()
-            );
-
-            String contentType = null;
-
-            // Try automatic detection
-            try {
-                contentType = java.nio.file.Files.probeContentType(
-                    java.nio.file.Paths.get(minio_key)
-                );
-            } catch (Exception ignored) {}
-
-            // Special handling for .eml
-            if (contentType == null && minio_key.toLowerCase().endsWith(".eml")) {
-                contentType = "message/rfc822";
-            }
-
-            // Fallback for unknown types
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-
-            response.setContentType(contentType);
-            response.setHeader(
-                "Content-Disposition",
-                "inline; filename=\"" + minio_key + "\""
-            );
-
-            try (stream; ServletOutputStream out = response.getOutputStream()) {
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = stream.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-                out.flush();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
+//	@GetMapping("/file")
+//    public void getFileByKey(@RequestParam String minio_key,@RequestParam String tenantId, HttpServletResponse response) {
+//        try {
+//        	String bucket = tenantId.toLowerCase();
+//            InputStream stream = minioClient.getObject(
+//                GetObjectArgs.builder()
+//                    .bucket(bucket)
+//                    .object(minio_key)
+//                    .build()
+//            );
+//
+//            String contentType = null;
+//
+//            // Try automatic detection
+//            try {
+//                contentType = java.nio.file.Files.probeContentType(
+//                    java.nio.file.Paths.get(minio_key)
+//                );
+//            } catch (Exception ignored) {}
+//
+//            // Special handling for .eml
+//            if (contentType == null && minio_key.toLowerCase().endsWith(".eml")) {
+//                contentType = "message/rfc822";
+//            }
+//
+//            // Fallback for unknown types
+//            if (contentType == null) {
+//                contentType = "application/octet-stream";
+//            }
+//
+//            response.setContentType(contentType);
+//            response.setHeader(
+//                "Content-Disposition",
+//                "inline; filename=\"" + minio_key + "\""
+//            );
+//
+//            try (stream; ServletOutputStream out = response.getOutputStream()) {
+//                byte[] buffer = new byte[8192];
+//                int bytesRead;
+//                while ((bytesRead = stream.read(buffer)) != -1) {
+//                    out.write(buffer, 0, bytesRead);
+//                }
+//                out.flush();
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 	/**
 	 * Uploads an Excel file and processes its contents to generate a map of sheet names 

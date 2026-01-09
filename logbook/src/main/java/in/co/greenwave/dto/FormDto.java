@@ -93,7 +93,7 @@ public class FormDto {
 	//added by ashok
 	private Timestamp modifiedDate;
 
-	private boolean dashboardType;
+//	private boolean dashboardType;
 
 	// Default constructor: Creates an empty FormDto instance.
 	public FormDto() {
@@ -171,8 +171,9 @@ public class FormDto {
 	public FormDto(int formID, String formName, String tableSQL, String insertSQL, String deleteSQL, String createdUser,
 			String documentId, String department, String selectedGrp, String formatID, int versionNumber,
 			boolean isActiveForm, String userId, Timestamp creationDate, String userGroup, String saveSQL,
-			String tenantId, List<CellDto> cellInfo, boolean isPublicAccess, String modifiedBy, Timestamp modifiedDate,
-			boolean dashboardType) {
+			String tenantId, List<CellDto> cellInfo, boolean isPublicAccess, String modifiedBy, Timestamp modifiedDate
+//			, boolean dashboardType
+			) {
 		super();
 		this.formID = formID;
 		this.formName = formName;
@@ -195,7 +196,7 @@ public class FormDto {
 		this.isPublicAccess = isPublicAccess;
 		this.modifiedBy = modifiedBy;
 		this.modifiedDate = modifiedDate;
-		this.dashboardType = dashboardType;
+//		this.dashboardType = dashboardType;
 	}
 
 	public List<CellDto> getCellInfo() {
@@ -374,13 +375,13 @@ public class FormDto {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public boolean isDashboardType() {
-		return dashboardType;
-	}
-
-	public void setDashboardType(boolean dashboardType) {
-		this.dashboardType = dashboardType;
-	}
+//	public boolean isDashboardType() {
+//		return dashboardType;
+//	}
+//
+//	public void setDashboardType(boolean dashboardType) {
+//		this.dashboardType = dashboardType;
+//	}
 
 	@Override
 	public String toString() {
@@ -390,7 +391,9 @@ public class FormDto {
 				+ ", versionNumber=" + versionNumber + ", isActiveForm=" + isActiveForm + ", userId=" + userId
 				+ ", creationDate=" + creationDate + ", userGroup=" + userGroup + ", saveSQL=" + saveSQL + ", tenantId="
 				+ tenantId + ", CellInfo=" + CellInfo + ", isPublicAccess=" + isPublicAccess + ", modifiedBy="
-				+ modifiedBy + ", modifiedDate=" + modifiedDate + ", dashboardType=" + dashboardType + "]";
+				+ modifiedBy + ", modifiedDate=" + modifiedDate + 
+//				", dashboardType=" + dashboardType + 
+				"]";
 	}
 
 }

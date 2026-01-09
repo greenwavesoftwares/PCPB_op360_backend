@@ -47,8 +47,8 @@ import in.co.greenwave.entity.FileTypeUtil;
 import in.co.greenwave.entity.FormInfo;
 import in.co.greenwave.entity.Transaction;
 
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+//import io.minio.MinioClient;
+//import io.minio.PutObjectArgs;
 
 /**
  * @author Subhajit Khasnobish
@@ -62,8 +62,8 @@ public class LogbookDAOServiceSqlServer {
 
 	private final DataSource OP360_Master_Tenant;
 
-	@Autowired
-	private MinioClient minioClient;
+//	@Autowired
+//	private MinioClient minioClient;
 
 	// Using two JdbcTemplate tools to connect to two different databases.
 	@Autowired
@@ -97,7 +97,9 @@ public class LogbookDAOServiceSqlServer {
 		 * gets all logbooks 
 		 */
 
-		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [isPublicAccess], [ModifedBy], [ModifiedDate], [TenantId], [DashboardType] FROM [dbo].[DigitalLogbookFormInfo]";
+		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [isPublicAccess], [ModifedBy], [ModifiedDate], [TenantId]"
+//				+ ", [DashboardType]"
+				+ " FROM [dbo].[DigitalLogbookFormInfo]";
 
 		// Using queryForList to fetch multiple rows
 		List<Map<String, Object>> rows = jdbcTemplateOp360.queryForList(sql);
@@ -124,7 +126,7 @@ public class LogbookDAOServiceSqlServer {
 			formDto.setModifiedBy((String) row.get("ModifedBy"));
 			formDto.setModifiedDate((Timestamp) row.get("ModifiedDate"));
 			formDto.setTenantId((String) row.get("TenantId"));
-			formDto.setDashboardType((Boolean) row.get("DashboardType"));
+//			formDto.setDashboardType((Boolean) row.get("DashboardType"));
 			allForms.add(formDto);
 		}
 
@@ -175,10 +177,12 @@ public class LogbookDAOServiceSqlServer {
 			String formatId = (String) e.get("FormatID");
 			Integer versionNumber = (Integer) e.get("VersionNumber");
 			Boolean isActiveUser = (Boolean) e.get("isActiveForm");
-			Boolean dashboardType = (Boolean) e.get("DashboardType");
+//			Boolean dashboardType = (Boolean) e.get("DashboardType");
 
 			FormInfo formInfo = new FormInfo(formId, formName, userId, saveSql, tableSql, deleteSql, creationDate,
-					createdUser, department, userGroup, documentId, formatId, versionNumber, isActiveUser, dashboardType);
+					createdUser, department, userGroup, documentId, formatId, versionNumber, isActiveUser
+//					, dashboardType
+					);
 
 			formInfo.setTenantId(tenantId);
 
@@ -203,7 +207,9 @@ public class LogbookDAOServiceSqlServer {
 		 */
 
 		// SQL statement to insert a new form into the database
-		String sql = "INSERT INTO [dbo].[DigitalLogbookFormInfo] ([FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId], [DashboardType]) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO [dbo].[DigitalLogbookFormInfo] ([FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId]"
+//				+ ", [DashboardType]"
+				+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		// Batch update to insert multiple forms
 		jdbcTemplateOp360.batchUpdate(sql, forms, forms.size(), (ps, formInfo) -> {
@@ -222,7 +228,7 @@ public class LogbookDAOServiceSqlServer {
 			ps.setInt(13, formInfo.getVersionNumber());
 			ps.setBoolean(14, formInfo.getIsActiveForm());
 			ps.setString(15, formInfo.getTenantId());
-			ps.setBoolean(16, formInfo.isDashboardType());
+//			ps.setBoolean(16, formInfo.isDashboardType());
 		});
 
 		return forms;
@@ -244,7 +250,9 @@ public class LogbookDAOServiceSqlServer {
 
 		jdbcTemplateOp360.execute(insertQuery);
 
-		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId], [DashboardType] FROM [dbo].[DigitalLogbookFormInfo]";
+		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId]"
+//				+ ", [DashboardType]"
+				+ " FROM [dbo].[DigitalLogbookFormInfo]";
 
 		// Using queryForList to fetch multiple rows
 		List<Map<String, Object>> rows = jdbcTemplateOp360.queryForList(sql);
@@ -268,7 +276,7 @@ public class LogbookDAOServiceSqlServer {
 			formInfo.setVersionNumber((Integer) row.get("VersionNumber"));
 			formInfo.setIsActiveForm((Boolean) row.get("isActiveForm"));
 			formInfo.setTenantId((String) row.get("TenantId"));
-			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
+//			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
 			allForms.add(formInfo);
 		}
 
@@ -328,6 +336,100 @@ public class LogbookDAOServiceSqlServer {
 	 * @param transaction
 	 * @return the saved transaction instance
 	 */
+//	public Transaction saveTransaction(TransactionDto transaction, String tenantId) {
+//
+//		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
+//
+//		// Extracting the fields from the transaction object
+//		String activityId = transaction.getActivityId();
+//		String formName = transaction.getFormName();
+//		String jobId = transaction.getJobId();
+//
+//		Map<String, Object> logbookData = transaction.getLogbookData();
+//
+//		String bucket = tenantId.toLowerCase();
+//		Pattern pattern = HEX_PATTERN;
+//
+//		if (logbookData != null) {
+//
+//			for (Map.Entry<String, Object> a : logbookData.entrySet()) {
+//
+//				Object rowData = a.getValue();
+//
+//				if (rowData instanceof Map) {
+//					Map<String, Object> rowMap = (Map<String, Object>) rowData;
+//
+//					if(rowMap.get("value") != null) {
+//						Object actualValueObj = rowMap.get("value");
+//
+//						// Value is a List/Array of numbers
+//						if (actualValueObj instanceof List) {
+//							List<?> valueList = (List<?>) actualValueObj;
+//							if (!valueList.isEmpty() && valueList.get(0) instanceof Number) {
+//
+//								byte[] bytes = new byte[valueList.size()];
+//								for (int i = 0; i < valueList.size(); i++) {
+//									bytes[i] = ((Number) valueList.get(i)).byteValue();
+//								}
+//								String objectKey = uploadToMinio(bucket, bytes);
+//								rowMap.put("value", objectKey);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		Gson gson = new Gson();
+//		String logBookDataToString = gson.toJson(logbookData);
+//
+//		String role = transaction.getRole();
+//		Timestamp timestamp = transaction.getTransactionTimestamp();
+//		String transactionRemarks = transaction.getUserRemarks();
+//		String userId = transaction.getUserId();
+//		Integer version = transaction.getFormversion();
+//		String transactionId = transaction.getTransactionId();
+//
+//		// SQL query to insert a new transaction record into the database
+//		String insertSql = "INSERT INTO dbo.LogbookTransactionData (ActivityId, formname, JobId, logbookdata, role, timestamp, transaction_remarks, userid, version, TransactionId, TenantId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//		// Execute the insert query
+//		int updatedRows = jdbcTemplateOp360.update(insertSql, activityId, formName, jobId, logBookDataToString, role, timestamp, transactionRemarks, userId, version, transactionId, tenantId);
+//
+//
+//		if (updatedRows > 0) {
+//			// SQL query to retrieve the saved transaction
+//			String selectSql = "SELECT [slno], [TransactionId], [JobId], [ActivityId], [formname], [version], [logbookdata], [transaction_remarks], [timestamp], [userid], [role], [TenantId] FROM dbo.LogbookTransactionData WHERE TransactionId = ? AND TenantId = ?";
+//
+//			// Retrieve the saved transaction using queryForMap
+//			try {
+//				Map<String, Object> resultMap = jdbcTemplateOp360.queryForMap(selectSql, transactionId, tenantId);
+//
+//				// Convert the result to a Transaction object
+//				return new Transaction(
+//						(Long) resultMap.get("slno"),
+//						(String) resultMap.get("TransactionId"),
+//						(String) resultMap.get("JobId"),
+//						(String) resultMap.get("ActivityId"),
+//						(String) resultMap.get("formname"),
+//						(Integer) resultMap.get("version"),
+//						(String) resultMap.get("logbookdata"),
+//						(String) resultMap.get("transaction_remarks"),
+//						(Timestamp) resultMap.get("timestamp"),
+//						(String) resultMap.get("userid"),
+//						(String) resultMap.get("role"),
+//						(String) resultMap.get("TenantId")
+//						);
+//			} catch (EmptyResultDataAccessException e) {
+//				return null;
+//			}
+//		}
+//
+//		// Return null if the transaction was not saved or not found
+//		System.out.println("Returning null because the transaction was not saved or not found");
+//		return null;
+//	}
+
+	
 	public Transaction saveTransaction(TransactionDto transaction, String tenantId) {
 
 		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
@@ -338,64 +440,6 @@ public class LogbookDAOServiceSqlServer {
 		String jobId = transaction.getJobId();
 
 		Map<String, Object> logbookData = transaction.getLogbookData();
-
-		String bucket = tenantId.toLowerCase();
-		Pattern pattern = HEX_PATTERN;
-
-		if (logbookData != null) {
-
-			for (Map.Entry<String, Object> a : logbookData.entrySet()) {
-
-				Object rowData = a.getValue();
-
-				if (rowData instanceof Map) {
-					Map<String, Object> rowMap = (Map<String, Object>) rowData;
-
-					if(rowMap.get("value") != null) {
-						Object actualValueObj = rowMap.get("value");
-
-						//					// Value is a Hex String
-						//					if (actualValueObj instanceof String) {
-						//						String actualValueString = (String) actualValueObj;
-						//						Matcher matcher = pattern.matcher(actualValueString);
-						//
-						//						List<String> binaries = new ArrayList<>();
-						//						while (matcher.find()) {
-						//							binaries.add(matcher.group());
-						//						}
-						//
-						//						if (!binaries.isEmpty()) {
-						//							List<String> keys = new ArrayList<>();
-						//							for (String hex : binaries) {
-						//								String hexData = hex.substring(2);
-						//								byte[] bytes = hexStringToByteArray(hexData);
-						//								String objectKey = uploadToMinio(bucket, bytes);
-						//								keys.add(objectKey);
-						//							}
-						//							for (int i = 0; i < binaries.size(); i++) {
-						//								actualValueString = actualValueString.replace(binaries.get(i), "'" + keys.get(i) + "'");
-						//							}
-						//							rowMap.put("value", actualValueString);
-						//						}
-						//					}
-
-						// Value is a List/Array of numbers
-						if (actualValueObj instanceof List) {
-							List<?> valueList = (List<?>) actualValueObj;
-							if (!valueList.isEmpty() && valueList.get(0) instanceof Number) {
-
-								byte[] bytes = new byte[valueList.size()];
-								for (int i = 0; i < valueList.size(); i++) {
-									bytes[i] = ((Number) valueList.get(i)).byteValue();
-								}
-								String objectKey = uploadToMinio(bucket, bytes);
-								rowMap.put("value", objectKey);
-							}
-						}
-					}
-				}
-			}
-		}
 		Gson gson = new Gson();
 		String logBookDataToString = gson.toJson(logbookData);
 
@@ -437,6 +481,7 @@ public class LogbookDAOServiceSqlServer {
 						(String) resultMap.get("TenantId")
 						);
 			} catch (EmptyResultDataAccessException e) {
+				System.out.println("Transaction not found: " + transactionId);
 				return null;
 			}
 		}
@@ -445,7 +490,7 @@ public class LogbookDAOServiceSqlServer {
 		System.out.println("Returning null because the transaction was not saved or not found");
 		return null;
 	}
-
+	
 
 	/**
 	 * 
@@ -462,7 +507,9 @@ public class LogbookDAOServiceSqlServer {
 		 * finds a logbook by form name and form info
 		 */
 
-		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId], [DashboardType] FROM [dbo].[DigitalLogbookFormInfo] WHERE [TenantId] = ? AND [FormName] = ?";
+		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId]"
+//				+ ", [DashboardType]"
+				+ " FROM [dbo].[DigitalLogbookFormInfo] WHERE [TenantId] = ? AND [FormName] = ?";
 
 		Object[] args = { tenantId, formName };
 
@@ -488,7 +535,7 @@ public class LogbookDAOServiceSqlServer {
 			formInfo.setVersionNumber((Integer) row.get("VersionNumber"));
 			formInfo.setIsActiveForm((Boolean) row.get("isActiveForm"));
 			formInfo.setTenantId((String) row.get("TenantId"));
-			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
+//			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
 			formInfos.add(formInfo);
 		}
 
@@ -1188,158 +1235,185 @@ public class LogbookDAOServiceSqlServer {
 	 * @throws SQLException
 	 * @throws JsonProcessingException
 	 */
-	public Map<String, Object> getQueryResultForGlobalCellUpdate(String query, String tenantId) throws JsonProcessingException {
+//	public Map<String, Object> getQueryResultForGlobalCellUpdate(String query, String tenantId) throws JsonProcessingException {
+//
+//		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
+//		String bucket = tenantId.toLowerCase();
+//
+//		/*
+//		 * Optimized MinIO implementation
+//		 */
+//
+//		Matcher matcher = HEX_PATTERN.matcher(query);
+//
+//		// Cache to map HexString -> MinIO Object Key
+//		// This ensures identical files are uploaded only once and share the same key
+//		Map<String, String> uniqueFileCache = new HashMap<>();
+//
+//		while (matcher.find()) {
+//			String fullHexString = matcher.group();
+//
+//			// ONLY process if we haven't uploaded this exact binary content yet
+//			if (!uniqueFileCache.containsKey(fullHexString)) {
+//				try {
+//					String hexData = fullHexString.substring(2); // Remove '0x'
+//					byte[] bytes = hexStringToByteArray(hexData);
+//
+//					// Detect file type
+//					FileTypeInfo info = FileTypeUtil.detect(bytes);
+//					String objectKey = UUID.randomUUID() + info.extension;
+//
+//					// Upload to MinIO
+//					try (InputStream input = new ByteArrayInputStream(bytes)) {
+//						minioClient.putObject(
+//								PutObjectArgs.builder()
+//								.bucket(bucket)
+//								.object(objectKey)
+//								.stream(input, bytes.length, -1)
+//								.contentType(info.mimeType)
+//								.build()
+//								);
+//					}
+//
+//					uniqueFileCache.put(fullHexString, objectKey);
+//
+//					System.out.println("Uploaded new unique file: " + objectKey);
+//
+//				} catch (Exception e) {
+//					throw new RuntimeException("Error uploading file to MinIO: " + e.getMessage(), e);
+//				}
+//			}
+//		}
+//
+//		System.out.println("Final Unique Keys: " + uniqueFileCache.values());
+//
+//		for (Map.Entry<String, String> entry : uniqueFileCache.entrySet()) {
+//			query = query.replace(entry.getKey(), "'" + entry.getValue() + "'");
+//		}
+//
+//		/*
+//		 * End MinIO implementation
+//		 */
+//
+//		final String finalQuery = query;
+//
+//		return jdbcTemplateOp360.execute((ConnectionCallback<Map<String, Object>>) connection -> {
+//
+//			Map<String, Object> lastSelectResult = new HashMap<>();
+//
+//			try (Statement stmt = connection.createStatement()) {
+//				boolean hasResultSet = stmt.execute(finalQuery);
+//
+//				while (true) {
+//
+//					if (hasResultSet) {
+//						try (ResultSet rs = stmt.getResultSet()) {
+//							ResultSetMetaData meta = rs.getMetaData();
+//							int columnCount = meta.getColumnCount();
+//
+//							System.out.println("columnCount : " + columnCount);
+//
+//							if (rs.next()) {
+//								lastSelectResult.clear(); // ensure last SELECT wins
+//								for (int i = 1; i <= columnCount; i++) {
+//									Object value = rs.getObject(i);
+//									String column = meta.getColumnLabel(i);
+//
+//									if (value instanceof java.sql.Date) {
+//										value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+//									} else if (value instanceof java.sql.Timestamp) {
+//										value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+//									} else if (value instanceof java.sql.Time) {
+//										value = new SimpleDateFormat("HH:mm:ss").format(value);
+//									}
+//
+//									lastSelectResult.put(column, value);
+//								}
+//							}
+//						} catch (Exception e) {
+//							System.err.println("Error processing ResultSet: " + e.getMessage());
+//							return Collections.singletonMap("error",e.getMessage());
+//						}
+//					} else {
+//						int updateCount = stmt.getUpdateCount();
+//						if (updateCount == -1) {
+//							break; // no more results
+//						}
+//					}
+//
+//					hasResultSet = stmt.getMoreResults();
+//				}
+//			} 
+//
+//			catch (SQLException e) {
+//				System.err.println("SQL execution error: " + e.getMessage());
+//				throw e; // propagate SQL exceptions properly
+//			}
+//
+//			return lastSelectResult.isEmpty() ? null : lastSelectResult;
+//		});
+//		
+//	}
+	
+	public Map<String, Object> getQueryResultForGlobalCellUpdate(String query, String tenantId) {
 
-		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
-		String bucket = tenantId.toLowerCase();
+	    JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
+	    final String finalQuery = query;
 
-		/*
-		 * Optimized MinIO implementation
-		 */
+	    return jdbcTemplateOp360.execute((ConnectionCallback<Map<String, Object>>) connection -> {
 
-		Matcher matcher = HEX_PATTERN.matcher(query);
+	        Map<String, Object> lastSelectResult = new HashMap<>();
 
-		// Cache to map HexString -> MinIO Object Key
-		// This ensures identical files are uploaded only once and share the same key
-		Map<String, String> uniqueFileCache = new HashMap<>();
+	        try (Statement stmt = connection.createStatement()) {
 
-		while (matcher.find()) {
-			String fullHexString = matcher.group();
+	            boolean hasResultSet = stmt.execute(finalQuery);
 
-			// ONLY process if we haven't uploaded this exact binary content yet
-			if (!uniqueFileCache.containsKey(fullHexString)) {
-				try {
-					String hexData = fullHexString.substring(2); // Remove '0x'
-					byte[] bytes = hexStringToByteArray(hexData);
+	            while (true) {
 
-					// Detect file type
-					FileTypeInfo info = FileTypeUtil.detect(bytes);
-					String objectKey = UUID.randomUUID() + info.extension;
+	                if (hasResultSet) {
+	                    try (ResultSet rs = stmt.getResultSet()) {
 
-					// Upload to MinIO
-					try (InputStream input = new ByteArrayInputStream(bytes)) {
-						minioClient.putObject(
-								PutObjectArgs.builder()
-								.bucket(bucket)
-								.object(objectKey)
-								.stream(input, bytes.length, -1)
-								.contentType(info.mimeType)
-								.build()
-								);
-					}
+	                        ResultSetMetaData meta = rs.getMetaData();
+	                        int columnCount = meta.getColumnCount();
 
-					uniqueFileCache.put(fullHexString, objectKey);
+	                        if (rs.next()) {
+	                            lastSelectResult.clear(); // last SELECT wins
 
-					System.out.println("Uploaded new unique file: " + objectKey);
+	                            for (int i = 1; i <= columnCount; i++) {
+	                                Object value = rs.getObject(i);
+	                                String column = meta.getColumnLabel(i);
 
-				} catch (Exception e) {
-					throw new RuntimeException("Error uploading file to MinIO: " + e.getMessage(), e);
-				}
-			}
-		}
+	                                if (value instanceof java.sql.Date) {
+	                                    value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+	                                } else if (value instanceof java.sql.Timestamp) {
+	                                    value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+	                                } else if (value instanceof java.sql.Time) {
+	                                    value = new SimpleDateFormat("HH:mm:ss").format(value);
+	                                }
 
-		System.out.println("Final Unique Keys: " + uniqueFileCache.values());
+	                                lastSelectResult.put(column, value);
+	                            }
+	                        }
+	                    }
+	                } else {
+	                    int updateCount = stmt.getUpdateCount();
+	                    if (updateCount == -1) {
+	                        break; // no more results
+	                    }
+	                }
 
-		for (Map.Entry<String, String> entry : uniqueFileCache.entrySet()) {
-			query = query.replace(entry.getKey(), "'" + entry.getValue() + "'");
-		}
+	                hasResultSet = stmt.getMoreResults();
+	            }
 
-		/*
-		 * End MinIO implementation
-		 */
+	        } catch (SQLException e) {
+	            System.err.println("SQL execution error: " + e.getMessage());
+	            throw e;
+	        }
 
-		final String finalQuery = query;
-
-		return jdbcTemplateOp360.execute((ConnectionCallback<Map<String, Object>>) connection -> {
-
-			Map<String, Object> lastSelectResult = new HashMap<>();
-
-			try (Statement stmt = connection.createStatement()) {
-				boolean hasResultSet = stmt.execute(finalQuery);
-
-				while (true) {
-
-					if (hasResultSet) {
-						try (ResultSet rs = stmt.getResultSet()) {
-							ResultSetMetaData meta = rs.getMetaData();
-							int columnCount = meta.getColumnCount();
-
-							System.out.println("columnCount : " + columnCount);
-
-							if (rs.next()) {
-								lastSelectResult.clear(); // ensure last SELECT wins
-								for (int i = 1; i <= columnCount; i++) {
-									Object value = rs.getObject(i);
-									String column = meta.getColumnLabel(i);
-
-									if (value instanceof java.sql.Date) {
-										value = new SimpleDateFormat("yyyy-MM-dd").format(value);
-									} else if (value instanceof java.sql.Timestamp) {
-										value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
-									} else if (value instanceof java.sql.Time) {
-										value = new SimpleDateFormat("HH:mm:ss").format(value);
-									}
-
-									lastSelectResult.put(column, value);
-								}
-							}
-						} catch (Exception e) {
-							System.err.println("Error processing ResultSet: " + e.getMessage());
-							return Collections.singletonMap("error",e.getMessage());
-						}
-					} else {
-						int updateCount = stmt.getUpdateCount();
-						if (updateCount == -1) {
-							break; // no more results
-						}
-					}
-
-					hasResultSet = stmt.getMoreResults();
-				}
-			} 
-
-			catch (SQLException e) {
-				System.err.println("SQL execution error: " + e.getMessage());
-				throw e; // propagate SQL exceptions properly
-			}
-
-			return lastSelectResult.isEmpty() ? null : lastSelectResult;
-		});
-
-
-		//				List<Map<String, Object>> rows = jdbcTemplateOp360.queryForList(query);
-		//		
-		//				List<Map<String, Object>> formattedRows = new ArrayList<>();
-		//		
-		//				for (Map<String, Object> row : rows) {
-		//					Map<String, Object> formattedRow = new HashMap<>();
-		//		
-		//					for (Map.Entry<String, Object> entry : row.entrySet()) {
-		//						String columnName = entry.getKey();
-		//						Object value = entry.getValue();
-		//		
-		//						if (value instanceof java.sql.Date) {
-		//							DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		//							formattedRow.put(columnName, df.format((java.sql.Date) value));
-		//						} else if (value instanceof java.sql.Timestamp) {
-		//							DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//							formattedRow.put(columnName, dtf.format((java.sql.Timestamp) value));
-		//						} else if (value instanceof java.sql.Time) {
-		//							DateFormat tf = new SimpleDateFormat("HH:mm:ss");
-		//							formattedRow.put(columnName, tf.format((java.sql.Time) value));
-		//						} else {
-		//							formattedRow.put(columnName, value);
-		//						}
-		//					}
-		//					formattedRows.add(formattedRow);
-		//				}
-		//		
-		//				if (formattedRows.isEmpty()) {
-		//					return null;
-		//				}
-		//		
-		//				return formattedRows.get(0);
+	        return lastSelectResult.isEmpty() ? null : lastSelectResult;
+	    });
 	}
+
 
 	/**
 	 * gets all transactions
@@ -1527,35 +1601,35 @@ public class LogbookDAOServiceSqlServer {
 		return logbooks;
 	}
 
-	private byte[] hexStringToByteArray(String hex) {
-		int len = hex.length();
-		byte[] data = new byte[len / 2];
+//	private byte[] hexStringToByteArray(String hex) {
+//		int len = hex.length();
+//		byte[] data = new byte[len / 2];
+//
+//		for (int i = 0; i < len; i += 2) {
+//			data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+//					+ Character.digit(hex.charAt(i + 1), 16));
+//		}
+//		return data;
+//	}
 
-		for (int i = 0; i < len; i += 2) {
-			data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
-					+ Character.digit(hex.charAt(i + 1), 16));
-		}
-		return data;
-	}
-
-	// Helper method to avoid duplicating MinIO upload code
-	private String uploadToMinio(String bucket, byte[] bytes) {
-		FileTypeInfo info = FileTypeUtil.detect(bytes);
-		String objectKey = UUID.randomUUID() + info.extension;
-
-		try (InputStream input = new ByteArrayInputStream(bytes)) {
-			minioClient.putObject(
-					PutObjectArgs.builder()
-					.bucket(bucket)
-					.object(objectKey)
-					.stream(input, bytes.length, -1)
-					.contentType(info.mimeType)
-					.build()
-					);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error uploading file to MinIO: " + e.getMessage(), e);
-		}
-		return objectKey;
-	}
+//	// Helper method to avoid duplicating MinIO upload code
+//	private String uploadToMinio(String bucket, byte[] bytes) {
+//		FileTypeInfo info = FileTypeUtil.detect(bytes);
+//		String objectKey = UUID.randomUUID() + info.extension;
+//
+//		try (InputStream input = new ByteArrayInputStream(bytes)) {
+//			minioClient.putObject(
+//					PutObjectArgs.builder()
+//					.bucket(bucket)
+//					.object(objectKey)
+//					.stream(input, bytes.length, -1)
+//					.contentType(info.mimeType)
+//					.build()
+//					);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new RuntimeException("Error uploading file to MinIO: " + e.getMessage(), e);
+//		}
+//		return objectKey;
+//	}
 }

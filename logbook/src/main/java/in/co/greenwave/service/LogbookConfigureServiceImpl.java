@@ -270,7 +270,7 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
 						+ "isActiveForm = ?, "
 						+"isPublicAccess = ?, "
 						+"ModifedBy = ?, "
-						+"DashboardType = ?, "
+//						+"DashboardType = ?, "
 						+"ModifiedDate = getDate(), "
 						+ "TenantId = ? "
 						+ "WHERE FormId = ? and VersionNumber = ?"; // Replace <PrimaryKeyColumn> with the actual column name of the unique identifier.
@@ -288,7 +288,7 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
 						formInfo.getVersionNumber(),
 						formInfo.getIsActiveForm(),
 						formInfo.isPublicAccess(),
-						formInfo.isDashboardType(),
+//						formInfo.isDashboardType(),
 						formInfo.getModifiedBy(),
 						tenantId,
 						formInfo.getFormID(),
@@ -657,8 +657,9 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
 		try {
 			String sql = "SELECT TOP(1) [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], " +
 							"[DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], " +
-							"[DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId], [DashboardType] " +
-							"FROM [dbo].[DigitalLogbookFormInfo] WHERE FormName = ? " +
+							"[DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId]"
+//							+ ", [DashboardType]"
+							+ " FROM [dbo].[DigitalLogbookFormInfo] WHERE FormName = ? " +
 							"ORDER BY VersionNumber DESC";
 
 			return jdbcTemplateOp360.queryForObject(sql, (rs, rowNum) -> {
@@ -678,7 +679,7 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
 				formDto.setVersionNumber(rs.getInt("VersionNumber"));
 				formDto.setActiveForm(rs.getBoolean("isActiveForm"));
 				formDto.setTenantId(rs.getString("TenantId"));
-				formDto.setDashboardType(rs.getBoolean("DashboardType"));
+//				formDto.setDashboardType(rs.getBoolean("DashboardType"));
 				return formDto;
 			}, formName);
 		} catch (EmptyResultDataAccessException e) {
@@ -788,8 +789,9 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
 		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
         String sql = "SELECT TOP(1) [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], " +
                 "[CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], " +
-                "[VersionNumber], [isActiveForm], [isPublicAccess], [ModifedBy], [ModifiedDate], [TenantId], [DashboardType] " +
-                "FROM [dbo].[DigitalLogbookFormInfo] ORDER BY FormId DESC";
+                "[VersionNumber], [isActiveForm], [isPublicAccess], [ModifedBy], [ModifiedDate], [TenantId]"
+//                + ", [DashboardType]"
+                + " FROM [dbo].[DigitalLogbookFormInfo] ORDER BY FormId DESC";
 
         return jdbcTemplateOp360.queryForObject(sql, new RowMapper<FormDto>() {
             @Override
@@ -813,7 +815,7 @@ public class LogbookConfigureServiceImpl implements LogbookConfigureService{
                 dto.setModifiedBy(rs.getString("ModifedBy"));
                 dto.setModifiedDate(rs.getTimestamp("ModifiedDate"));
                 dto.setTenantId(rs.getString("TenantId"));
-                dto.setDashboardType(rs.getBoolean("DashboardType"));
+//                dto.setDashboardType(rs.getBoolean("DashboardType"));
                 
                 // InsertSQL is not part of the query, so set manually or remove field
                 dto.setInsertSQL(null);

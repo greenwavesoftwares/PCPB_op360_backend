@@ -92,7 +92,7 @@ public class FormInfo {
 	//added by ashok
 	private Timestamp modifiedDate;
 
-	private boolean dashboardType;
+//	private boolean dashboardType;
 
 	public FormInfo() {
 	}
@@ -157,7 +157,9 @@ public class FormInfo {
 	 */
 	public FormInfo(int formId, String formName, String userId, String saveSQL, String tableSQL, String deleteSQL,
 			Timestamp creationDate, String createdUser, String department, String userGroup, String documentID,
-			String formatId, int versionNumber, boolean isActiveForm, boolean dashboardType) {
+			String formatId, int versionNumber, boolean isActiveForm
+//			, boolean dashboardType
+			) {
 		super();
 		this.formId = formId;
 		this.formName = formName;
@@ -173,7 +175,7 @@ public class FormInfo {
 		this.formatId = formatId;
 		this.versionNumber = versionNumber;
 		this.isActiveForm = isActiveForm;
-		this.dashboardType = dashboardType;
+//		this.dashboardType = dashboardType;
 	}
 
 	/**
@@ -203,7 +205,9 @@ public class FormInfo {
 	public FormInfo(int formId, String formName, String userId, String saveSQL, String tableSQL, String deleteSQL,
 			Timestamp creationDate, String createdUser, String department, String userGroup, String documentId,
 			String formatId, int versionNumber, boolean isActiveForm, String tenantId, boolean isPublicAccess,
-			String modifiedBy, Timestamp modifiedDate, boolean dashboardType) {
+			String modifiedBy, Timestamp modifiedDate
+//			, boolean dashboardType
+			) {
 		super();
 		this.formId = formId;
 		this.formName = formName;
@@ -223,7 +227,7 @@ public class FormInfo {
 		this.isPublicAccess = isPublicAccess;
 		this.modifiedBy = modifiedBy;
 		this.modifiedDate = modifiedDate;
-		this.dashboardType = dashboardType;
+//		this.dashboardType = dashboardType;
 	}
 
 	// Getters and Setters to get and change the values of each field of FormInfo object.
@@ -392,13 +396,13 @@ public class FormInfo {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public boolean isDashboardType() {
-		return dashboardType;
-	}
-
-	public void setDashboardType(boolean dashboardType) {
-		this.dashboardType = dashboardType;
-	}
+//	public boolean isDashboardType() {
+//		return dashboardType;
+//	}
+//
+//	public void setDashboardType(boolean dashboardType) {
+//		this.dashboardType = dashboardType;
+//	}
 
 	@Override
 	public String toString() {
@@ -407,8 +411,9 @@ public class FormInfo {
 				+ ", createdUser=" + createdUser + ", department=" + department + ", userGroup=" + userGroup
 				+ ", documentId=" + documentId + ", formatId=" + formatId + ", versionNumber=" + versionNumber
 				+ ", isActiveForm=" + isActiveForm + ", tenantId=" + tenantId + ", isPublicAccess=" + isPublicAccess
-				+ ", modifiedBy=" + modifiedBy + ", modifiedDate=" + modifiedDate + ", dashboardType=" + dashboardType
-				+ "]";
+				+ ", modifiedBy=" + modifiedBy + ", modifiedDate=" + modifiedDate + 
+//				", dashboardType=" + dashboardType + 
+				"]";
 	}
 
 	/**

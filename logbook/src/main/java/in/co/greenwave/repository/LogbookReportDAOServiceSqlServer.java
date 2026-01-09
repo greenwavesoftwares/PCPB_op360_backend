@@ -583,7 +583,9 @@ public class LogbookReportDAOServiceSqlServer {
 		JdbcTemplate jdbcTemplateOp360 = jdbcTemplateCollection.get(tenantId).get(0);
 
 		// SQL query to get the form information for the specified tenant, form name, and version.
-		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId], [DashboardType] FROM [dbo].[DigitalLogbookFormInfo] WHERE [TenantId] = ? AND [FormName] = ? AND [VersionNumber] = ?";
+		String sql = "SELECT [FormId], [FormName], [UserID], [SaveSQL], [TableSQL], [DeleteSQL], [CreationDate], [CreatedUser], [Department], [UserGroup], [DocumentID], [FormatID], [VersionNumber], [isActiveForm], [TenantId]"
+//				+ ", [DashboardType]"
+				+ " FROM [dbo].[DigitalLogbookFormInfo] WHERE [TenantId] = ? AND [FormName] = ? AND [VersionNumber] = ?";
 
 		// Create an array of arguments for the SQL query.
 		Object[] args = { tenantId, formName, version };
@@ -612,7 +614,7 @@ public class LogbookReportDAOServiceSqlServer {
 			formInfo.setVersionNumber((Integer) row.get("VersionNumber"));
 			formInfo.setIsActiveForm((Boolean) row.get("isActiveForm"));
 			formInfo.setTenantId((String) row.get("TenantId"));
-			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
+//			formInfo.setDashboardType((Boolean) row.get("DashboardType"));
 
 			return formInfo; // Return the FormInfo object with details.
 		}
